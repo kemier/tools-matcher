@@ -157,7 +157,7 @@ async def handle_call_tool(
 # Removed standalone handle_get_relevant_tools function
 
 # --- Main Execution ---
-async def main():
+async def main_async(): # Renamed from main
     global server
 
     if not model:
@@ -194,5 +194,14 @@ async def main():
             
     logger.info("MCP server finished.")
 
+def main(): # New synchronous wrapper
+    """Synchronous entry point for the server."""
+    try:
+        asyncio.run(main_async())
+    except KeyboardInterrupt:
+        logger.info("Server shutdown requested via KeyboardInterrupt.")
+    except Exception as e:
+        logger.critical(f"Unhandled exception in main: {e}", exc_info=True)
+
 if __name__ == "__main__":
-    asyncio.run(main())
+    main() # Call the synchronous wrapper
